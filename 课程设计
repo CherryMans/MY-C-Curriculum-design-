@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <time.h>
+#include <stdlib.h>
+#include <string.h>
+#include <windows.h>
+struct Student
+{
+	char name[20];
+	int count;
+	int win;
+}student;
+void save_data(struct Student *p)
+{
+	FILE *fp;
+	struct Student data=*p;
+	if((fp=fopen("a.dat","ab+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(0);
+	}
+	fwrite(&data,sizeof(struct Student),1,fp);
+	if(fclose(fp))
+	{
+		printf("关闭失败\n");
+		exit(0);
+	}
+}
+int main()
+{
+	again:
+	system("title 2016石头剪刀布人机大战2.0");
+	system("mode con cols=60 lines=45");
+	system("color F3");
+	int com,user,users,n;
+	int x;
+	int sum=0;
+	int xum=0;
+	char c;
+	srand((unsigned)time(NULL));
+	printf("------------------------------------------------------------\n");
+	printf("---------------------剪刀石头布小游戏！---------------------\n");
+	printf("------------------------------------------------------------\n");
+	printf("                                                            \n");
+	printf("                    按任意键开始游戏");
+	getchar();
+	printf("                                                            \n");
+	printf("         --1.游客/练习模式--or--2.实名对战模式--\n"); 
+	scanf("%d",&x);
+	if(x==1)
+	{
+		printf("                  【输入你想玩的局数】\n");
+		scanf("%d",&n);
+do{
+		printf("输入你想出的: (1.剪刀、2.石头、3.包)：\n");
+		scanf("%d",&user);
+		com=rand()%3+1;
+		printf("电脑出了%s\n",com==1?"剪刀\n":com==2?"石头\n":"包\n");
+		printf("玩家出了%s\n",user==1?"剪刀\n":user==2?"石头\n":"包\n");
+		switch(com-user)
+		{
+			case 0:
+				printf("此局平手~~\n");
+				break;
+			case 1:
+			case -2:
+				printf("这局你输了~~\n");
+				sum=sum+1;
+				break;
+			case -1:
+			case 2:
+				printf("这局你赢了!!\n");
+				xum=xum+1;
+		}
+	}
+	while((sum+xum)!=n);
+	if(sum>xum)
+	{
+		printf("------------------------------------------------------------\n");
+		printf("===============         电脑胜出!          =================\n");
+		printf("------------------------------------------------------------\n");
+	}
+	else
+	{
+		printf("------------------------------------------------------------\n");
+		printf("===============      你赢了本次游戏!      =================\n");
+		printf("------------------------------------------------------------\n");
+	}
+	}
+	else
+	{
+		int get,i,count,win,lose;
+		printf("                  【输入你想玩的局数】\n");
+		scanf("%d",&n);
+		do
+		{
+		printf("输入你想出的: (1.剪刀、2.石头、3.包)：\n");
+		scanf("%d",&user);
+		com=rand()%3+1;
+		printf("电脑出了%s\n",com==1?"剪刀\n":com==2?"石头\n":"包\n");
+		printf("玩家出了%s\n",user==1?"剪刀\n":user==2?"石头\n":"包\n");
+		switch(com-user)
+		{
+			case 0:
+				printf("此局平手~~\n");
+				++count;
+				break;
+			case 1:
+			case -2:
+				printf("这局你输了~~\n");
+				++lose;
+				++count;
+				sum=sum+1;
+				break;
+			case -1:
+			case 2:
+				printf("这局你赢了!!\n");
+				++win;
+				++count;
+				xum=xum+1;
+		}
+		}
+	while((sum+xum)!=n);
+	if(sum>xum)
+	{
+		printf("------------------------------------------------------------\n");
+		printf("===============         电脑胜出!           ================\n");
+		printf("======        很遗憾~本场比赛将没有积分累加           ======\n");
+	}
+	else
+	{
+		printf("------------------------------------------------------------\n");
+		printf("===========          你赢了本次游戏!         =============\n");
+		printf("------------------------------------------------------------\n");
+		printf("            请在排行榜留下你的尊姓大名:———\n");
+		getchar();
+		gets(student.name);
+		student.win=win;
+		student.count=count;
+		save_data(&student);
+	}
+	}
+	onemore: 
+	printf("------------------------------------------------------------\n");
+	printf("   继续游戏按[1]; 查看高校排行榜输入[2]; 结束游戏按[0]\n");
+	printf("------------------------------------------------------------\n");
+	int y;
+	scanf("%d",&y);
+	if(y==2)
+	{
+	FILE *fp=NULL;
+	struct Student data;
+	if((fp=fopen("a.dat","ab+"))==NULL)
+	{
+		printf("打开失败\n");
+		exit(0);
+	}
+	fread(&data,sizeof(struct Student),1,fp);
+	while(!feof(fp))
+	{
+		printf("姓名\t胜局\t总盘数\n");
+		printf("%-8s%-8d%-8d\n",data.name,data.win,data.count);
+		printf("------------------------------------------------------------\n");
+		fread(&data,sizeof(struct Student),1,fp);
+	}
+	if(fclose(fp))
+	{
+		printf("关闭失败\n");
+		exit(0);
+	}
+	goto onemore;
+	}
+	else if(y==1){
+		goto again;
+	} 
+}
